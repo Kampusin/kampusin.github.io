@@ -1,3 +1,6 @@
+# robots.txt — Kampusin (https://kampusin.github.io)
+# Situs publik, izinkan semua crawler
+
 User-agent: Googlebot
 Allow: /
 
@@ -12,3 +15,6 @@ Allow: /
 
 User-agent: *
 Allow: /
+
+# Sitemap
+Sitemap: https://kampusin.github.io/sitemap.xml
