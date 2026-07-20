@@ -3,7 +3,11 @@ import { supabase } from '../lib/supabase';
 import { motion } from 'framer-motion';
 import { Mail, Lock, AlertCircle } from 'lucide-react';
 
-export function Login() {
+interface LoginProps {
+  onDemoLogin?: () => void;
+}
+
+export function Login({ onDemoLogin }: LoginProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -132,6 +136,18 @@ export function Login() {
               'Masuk'
             )}
           </motion.button>
+
+          {onDemoLogin && (
+            <motion.button 
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              type="button" 
+              onClick={onDemoLogin}
+              className="w-full mt-1 bg-white/10 text-white font-semibold py-3.5 rounded-xl border border-white/20 hover:bg-white/20 transition-all flex justify-center items-center"
+            >
+              Mode Demo (Tanpa Login)
+            </motion.button>
+          )}
         </form>
 
         <p className="mt-8 text-center text-xs text-white/30">

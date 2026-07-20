@@ -28,7 +28,7 @@ function App() {
 
   return (
     <div className="font-sans">
-      {!session ? <Login /> : <Dashboard session={session} />}
+      {!session ? <Login onDemoLogin={() => setSession({ user: { id: 'demo' } })} /> : <Dashboard session={session} onLogout={() => setSession(null)} />}
     </div>
   );
 }
