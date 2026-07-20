@@ -64,15 +64,17 @@
         <span id="icMenu"></span>
       </button>
       <div class="topbar-title" id="topbarTitle">Dashboard</div>
-      <div class="topbar-search">
-        <span id="icSearch"></span>
-        <input type="search" placeholder="Cari mata kuliah, nilai…" aria-label="Cari">
+      <div class="topbar-right">
+        <div class="topbar-search">
+          <span id="icSearch"></span>
+          <input type="search" placeholder="Cari mata kuliah, nilai…" aria-label="Cari">
+        </div>
+        <button class="btn btn-ghost" style="position: relative;" aria-label="Notifikasi" onclick="Kampusin._toast('Tidak ada notifikasi baru.')">
+          <span id="icBell"></span>
+          <span class="dot dot-danger dot-pulse" style="position:absolute; top:8px; right:10px;"></span>
+        </button>
+        <a href="#/profile" class="avatar" id="topAvatar" data-nav="profile" style="cursor:pointer;">--</a>
       </div>
-      <button class="btn btn-ghost" style="position: relative;" aria-label="Notifikasi" onclick="Kampusin._toast('Tidak ada notifikasi baru.')">
-        <span id="icBell"></span>
-        <span class="dot dot-danger dot-pulse" style="position:absolute; top:8px; right:10px;"></span>
-      </button>
-      <a href="#/profile" class="avatar" id="topAvatar" data-nav="profile" style="cursor:pointer;">--</a>
     </header>
 
     <main class="content" id="view"><!-- view rendered here --></main>
@@ -357,97 +359,121 @@
     const attAvg = Math.round(K.ATTENDANCE_SUMMARY.reduce((a,c)=>a+K.attRate(c),0) / K.ATTENDANCE_SUMMARY.length);
     const sksPercent = Math.round(profile.sksLulus / profile.sksTotal * 100);
 
-    let html = pageHead(`${welcome()}, ${firstName(profile.name)}`,
-      `Semester ${profile.semester} · ${profile.prodi}`);
-
-    // Stats
-    html += `<div class="stats-grid">
-      <div class="stat-card" data-tilt>
-        <div class="stat-icon stat-icon-brand">${I.grades}</div>
-        <div class="stat-value">${profile.ipk.toFixed(2)}</div>
-        <div class="stat-label">IPK kumulatif</div>
-        <div class="stat-trend up">${I.trendUp} +0.12 sem ini</div>
+    // --- BENTO GRID START ---
+    html += `<div class="bento-grid">
+    
+      <!-- Welcome Card (Span 2 cols) -->
+      <div class="bento-item col-2">
+        <div class="bento-header">
+          <div>
+            <h3>Selamat Datang</h3>
+            <h2 style="font-size: var(--fs-xl); color: var(--text-strong); margin-top:4px;">${firstName(profile.name)}</h2>
+          </div>
+          <div class="bento-icon" style="color:var(--brand-600);">${I.profile}</div>
+        </div>
+        <div class="text-sm text-muted" style="margin-top:auto;">Semester ${profile.semester} · ${profile.prodi}</div>
       </div>
-      <div class="stat-card" data-tilt>
-        <div class="stat-icon stat-icon-green">${I.attendance}</div>
-        <div class="stat-value">${attAvg}%</div>
-        <div class="stat-label">Rata-rata kehadiran</div>
-        <div class="stat-trend up">${I.trendUp} Stabil</div>
+      
+      <!-- IPK Card -->
+      <div class="bento-item col-1">
+        <div class="bento-header">
+          <h3>IPK Kumulatif</h3>
+          <div class="bento-icon" style="color:var(--brand-600);">${I.grades}</div>
+        </div>
+        <div class="bento-value">${profile.ipk.toFixed(2)}</div>
+        <div class="bento-desc"><span class="trend">+0.12</span> sem ini</div>
       </div>
-      <div class="stat-card" data-tilt>
-        <div class="stat-icon stat-icon-amber">${I.courses}</div>
-        <div class="stat-value">${profile.sksLulus}<span style="font-size:var(--fs-md); color: var(--text-muted);">/${profile.sksTotal}</span></div>
-        <div class="stat-label">SKS lulus</div>
-        <div class="progress" style="margin-top: var(--sp-2);"><div class="progress-bar" style="width:${sksPercent}%"></div></div>
+      
+      <!-- Attendance Card -->
+      <div class="bento-item col-1">
+        <div class="bento-header">
+          <h3>Kehadiran</h3>
+          <div class="bento-icon" style="color:var(--success);">${I.attendance}</div>
+        </div>
+        <div class="bento-value">${attAvg}%</div>
+        <div class="bento-desc"><span class="trend" style="color:var(--stone-600); background:var(--stone-200);">Stabil</span></div>
       </div>
-      <div class="stat-card" data-tilt>
-        <div class="stat-icon stat-icon-blue">${I.schedule}</div>
-        <div class="stat-value">${todayClasses.length}</div>
-        <div class="stat-label">Kelas hari ini (${todayName})</div>
+      
+      <!-- SKS Card -->
+      <div class="bento-item col-1">
+        <div class="bento-header">
+          <h3>SKS Lulus</h3>
+          <div class="bento-icon" style="color:var(--warning);">${I.courses}</div>
+        </div>
+        <div class="bento-value">${profile.sksLulus}<span style="font-size:var(--fs-md); color:var(--stone-400);">/${profile.sksTotal}</span></div>
+        <div class="progress" style="margin-top: var(--sp-4);"><div class="progress-bar" style="width:${sksPercent}%"></div></div>
       </div>
-    </div>`;
-
-    // Charts & Today
-    html += `<div class="grid-2">
-      <div class="card" data-tilt data-tilt-max="2" data-tilt-glare="false" style="transform-style: preserve-3d; display: flex; flex-direction: column;">
-        <div class="card-header flex items-center justify-between" style="transform: translateZ(20px);">
-          <h3>Analitik Akademik</h3>
+      
+      <!-- Chart Card (Span 3 cols, Span 2 rows) -->
+      <div class="bento-item col-3 row-2 bento-chart">
+        <div class="bento-header" style="margin-bottom:0;">
+          <div>
+            <h3>Analitik Akademik</h3>
+            <div class="text-sm text-muted">Perkembangan IPK dan Kehadiran 4 Semester Terakhir</div>
+          </div>
           <span class="badge badge-brand">Semester 4</span>
         </div>
-        <div class="card-pad" style="flex:1; position:relative; min-height: 250px; transform: translateZ(30px);">
+        <div class="bento-chart-container">
           <canvas id="dashboardChart"></canvas>
         </div>
       </div>
-
-      <div class="card" data-tilt data-tilt-max="2" data-tilt-glare="false" style="transform-style: preserve-3d;">
-        <div class="card-header flex items-center justify-between" style="transform: translateZ(20px);">
-          <h3>Jadwal hari ini</h3>
-          <span class="text-xs text-muted">${todayName}, 20 Jul 2026</span>
-        </div>`;
+      
+      <!-- Today's Schedule Card -->
+      <div class="bento-item col-2 row-2">
+        <div class="bento-header">
+          <div>
+            <h3>Jadwal Hari Ini</h3>
+            <div class="text-xs text-muted">${todayName}, 20 Jul 2026</div>
+          </div>
+          <div class="bento-icon" style="color:var(--info);">${I.schedule}</div>
+        </div>
+        <div class="list-group" style="flex:1; overflow-y:auto;">`;
 
     if (todayClasses.length === 0) {
-      html += `<div class="card-pad text-muted text-sm" style="text-align:center; padding: var(--sp-10);">
-        ${I.schedule}<br><br>Tidak ada kelas hari ini. Waktunya istirahat.
-      </div>`;
+      html += `<div style="text-align:center; padding:var(--sp-6); color:var(--stone-400);">Tidak ada kelas hari ini. Waktunya istirahat.</div>`;
     } else {
-      html += '<div style="padding: var(--sp-2);">';
       todayClasses.forEach(c => {
-        const colorBg = c.color==='brand'?'var(--brand-50)':c.color==='amber'?'var(--warning-bg)':c.color==='green'?'var(--success-bg)':'var(--info-bg)';
-        const colorTxt = c.color==='brand'?'var(--brand-700)':c.color==='amber'?'var(--warning)':c.color==='green'?'var(--success)':'var(--info)';
-        html += `<div class="flex items-center gap-3" style="padding: var(--sp-3); border-bottom: 1px solid var(--stone-100);">
-          <div style="width:4px; align-self:stretch; background:${colorTxt}; border-radius: var(--r-full); min-height: 40px;"></div>
-          <div style="flex:1; min-width:0;">
-            <div style="font-weight:600; color:var(--text-strong);">${c.name}</div>
-            <div class="text-xs text-muted flex items-center gap-2" style="margin-top:2px; flex-wrap:wrap;">
-              <span class="mono">${c.code}</span> · ${I.clock.replace('width="18"','width="13"').replace('height="18"','height="13"')} ${c.start}–${c.end} · ${c.room}
-            </div>
+        html += `<div class="list-item">
+          <div class="list-icon"></div>
+          <div class="list-content">
+            <div class="list-title">${c.name}</div>
+            <div class="list-subtitle">${c.start} - ${c.end} · ${c.room}</div>
           </div>
-          <span class="badge" style="background:${colorBg}; color:${colorTxt};">${c.lecturer.split(' ')[0]}</span>
+          <span class="badge badge-neutral">${c.code}</span>
         </div>`;
       });
-      html += '</div>';
     }
-    html += `</div>`;
-
-    // Announcements
-    const topAnn = K.ANNOUNCEMENTS.slice(0,3);
-    html += `<div class="card" data-tilt data-tilt-max="2" data-tilt-glare="false" style="transform-style: preserve-3d;">
-      <div class="card-header flex items-center justify-between" style="transform: translateZ(20px);">
-        <h3>Pengumuman terbaru</h3>
-        <a href="#/announce" data-nav="announce" class="text-xs" style="color:var(--brand-600); font-weight:600;">Lihat semua</a>
+        
+    html += `</div>
       </div>
-      <div>`;
+      
+      <!-- Announcements Card -->
+      <div class="bento-item col-2 row-2">
+        <div class="bento-header">
+          <h3>Pengumuman Terbaru</h3>
+          <a href="#/announce" data-nav="announce" class="text-xs text-muted" style="font-weight:700;">Lihat Semua</a>
+        </div>
+        <div class="list-group" style="flex:1; overflow-y:auto;">`;
+        
+    const topAnn = K.ANNOUNCEMENTS.slice(0,3);
     topAnn.forEach(a => {
       const badge = a.priority==='high' ? '<span class="badge badge-danger">Penting</span>' : '';
-      html += `<div style="padding: var(--sp-4) var(--sp-6); border-bottom: 1px solid var(--stone-100);">
-        <div class="flex items-center justify-between gap-2" style="margin-bottom:4px;">
-          <div style="font-weight:600; color:var(--text-strong); font-size: var(--fs-sm);">${a.title}</div>
-          ${badge}
+      html += `<div class="list-item" style="align-items:flex-start;">
+        <div class="list-content">
+          <div class="flex justify-between items-center gap-2">
+            <div class="list-title" style="white-space:normal; line-height:1.4;">${a.title}</div>
+            ${badge}
+          </div>
+          <div class="list-subtitle" style="margin-top:8px;">${K.relTime(a.date)} · ${a.author}</div>
         </div>
-        <div class="text-xs text-muted">${K.relTime(a.date)} · ${a.author}</div>
       </div>`;
     });
-    html += `</div></div></div>`; // close card + grid-2
+        
+    html += `</div>
+      </div>
+      
+    </div>`;
+    // --- BENTO GRID END ---
 
     return html;
   };
@@ -754,66 +780,128 @@
     let html = pageHead(`${welcome()}, ${firstName(profile.name)}`,
       `${profile.jabatan} · ${profile.prodi}`);
 
-    html += `<div class="stats-grid">
-      <div class="stat-card" data-tilt><div class="stat-icon stat-icon-brand">${I.courses}</div><div class="stat-value">${K.DOSEN_COURSES.length}</div><div class="stat-label">Mata kuliah ampu</div></div>
-      <div class="stat-card" data-tilt><div class="stat-icon stat-icon-green">${I.students}</div><div class="stat-value">${totalStudents}</div><div class="stat-label">Total mahasiswa</div></div>
-      <div class="stat-card" data-tilt><div class="stat-icon stat-icon-amber">${I.profile}</div><div class="stat-value">${K.BIMBINGAN.length}</div><div class="stat-label">Bimbingan PA</div></div>
-      <div class="stat-card" data-tilt><div class="stat-icon stat-icon-blue">${I.schedule}</div><div class="stat-value">${todayClasses.length}</div><div class="stat-label">Kelas hari ini</div></div>
-    </div>`;
-
-    // Upcoming sessions to open attendance
-    html += `<div class="grid-2">
-      <div class="card" data-tilt data-tilt-max="2" data-tilt-glare="false" style="transform-style: preserve-3d; display: flex; flex-direction: column;">
-        <div class="card-header flex items-center justify-between" style="transform: translateZ(20px);">
-          <h3>Statistik Kehadiran Mahasiswa</h3>
+    // --- BENTO GRID START ---
+    html += `<div class="bento-grid">
+    
+      <!-- Welcome Card (Span 2 cols) -->
+      <div class="bento-item col-2">
+        <div class="bento-header">
+          <div>
+            <h3>Selamat Datang,</h3>
+            <h2 style="font-size: var(--fs-xl); color: var(--text-strong); margin-top:4px;">${firstName(profile.name)}</h2>
+          </div>
+          <div class="bento-icon" style="color:var(--brand-600);">${I.profile}</div>
         </div>
-        <div class="card-pad" style="flex:1; position:relative; min-height: 250px; transform: translateZ(30px);">
+        <div class="text-sm text-muted" style="margin-top:auto;">${profile.jabatan} · ${profile.prodi}</div>
+      </div>
+      
+      <!-- Courses Card -->
+      <div class="bento-item col-1">
+        <div class="bento-header">
+          <h3>Kelas Ampu</h3>
+          <div class="bento-icon" style="color:var(--brand-600);">${I.courses}</div>
+        </div>
+        <div class="bento-value">${K.DOSEN_COURSES.length}</div>
+      </div>
+      
+      <!-- Total Students Card -->
+      <div class="bento-item col-1">
+        <div class="bento-header">
+          <h3>Mhs Diajar</h3>
+          <div class="bento-icon" style="color:var(--success);">${I.students}</div>
+        </div>
+        <div class="bento-value">${totalStudents}</div>
+      </div>
+      
+      <!-- Advisees Card -->
+      <div class="bento-item col-1">
+        <div class="bento-header">
+          <h3>Bimbingan PA</h3>
+          <div class="bento-icon" style="color:var(--warning);">${I.profile}</div>
+        </div>
+        <div class="bento-value">${K.BIMBINGAN.length}</div>
+      </div>
+      
+      <!-- Today's Classes Card -->
+      <div class="bento-item col-1">
+        <div class="bento-header">
+          <h3>Kelas Hari Ini</h3>
+          <div class="bento-icon" style="color:var(--info);">${I.schedule}</div>
+        </div>
+        <div class="bento-value">${todayClasses.length}</div>
+      </div>
+      
+      <!-- Chart Card (Span 2 cols, Span 2 rows) -->
+      <div class="bento-item col-2 row-2 bento-chart">
+        <div class="bento-header" style="margin-bottom:0;">
+          <div>
+            <h3>Statistik Kehadiran Mahasiswa</h3>
+            <div class="text-sm text-muted">Berdasarkan data minggu lalu</div>
+          </div>
+        </div>
+        <div class="bento-chart-container">
           <canvas id="dosenDashboardChart"></canvas>
         </div>
       </div>
       
-      <div class="card" data-tilt data-tilt-max="2" data-tilt-glare="false" style="transform-style: preserve-3d;">
-        <div class="card-header flex items-center justify-between" style="transform: translateZ(20px);">
-          <h3>Buka sesi absensi</h3>
-          <span class="text-xs text-muted">${todayName}</span>
-        </div>`;
+      <!-- Open Sessions Card (Span 2 cols, Span 2 rows) -->
+      <div class="bento-item col-2 row-2">
+        <div class="bento-header">
+          <div>
+            <h3>Buka Sesi Absensi</h3>
+            <div class="text-xs text-muted">${todayName}</div>
+          </div>
+          <div class="bento-icon" style="color:var(--brand-600);">${I.attendance}</div>
+        </div>
+        <div class="list-group" style="flex:1; overflow-y:auto;">`;
+
     if (todayClasses.length === 0) {
-      html += `<div class="card-pad text-muted text-sm" style="text-align:center; padding: var(--sp-10);">Tidak ada kelas hari ini.</div>`;
+      html += `<div style="text-align:center; padding:var(--sp-6); color:var(--stone-400);">Tidak ada kelas hari ini.</div>`;
     } else {
       todayClasses.forEach(c => {
-        html += `<div class="flex items-center gap-3" style="padding: var(--sp-4) var(--sp-6); border-bottom: 1px solid var(--stone-100);">
-          <div style="flex:1;">
-            <div style="font-weight:600; color:var(--text-strong);">${c.name}</div>
-            <div class="text-xs text-muted">${c.class} · ${I.clock.replace('width="18"','width="13"').replace('height="18"','height="13"')} ${c.start} · ${c.room}</div>
+        html += `<div class="list-item" style="align-items:center;">
+          <div class="list-icon" style="background:var(--success);"></div>
+          <div class="list-content">
+            <div class="list-title">${c.name}</div>
+            <div class="list-subtitle">${c.class} · ${c.start} · ${c.room}</div>
           </div>
-          <button class="btn btn-primary" style="min-height:36px; padding: var(--sp-2) var(--sp-4);" onclick="Kampusin._openSession('${c.code}','${c.class}')">${I.attendance.replace('class="nav-icon"','width="16" height="16"')} Buka</button>
+          <button class="btn btn-primary" style="padding: 6px 12px; min-height: 0; font-size: 11px;" onclick="Kampusin._openSession('${c.code}','${c.class}')">Buka</button>
         </div>`;
       });
     }
-    html += `</div>`;
 
-    // Recent advisees with low IPK alert
-    html += `<div class="card" data-tilt data-tilt-max="2" data-tilt-glare="false" style="transform-style: preserve-3d; grid-column: 1 / -1;">
-      <div class="card-header flex items-center justify-between" style="transform: translateZ(20px);">
-        <h3>Mahasiswa perlu perhatian</h3>
-        <a href="#/students" data-nav="students" class="text-xs" style="color:var(--brand-600); font-weight:600;">Semua</a>
-      </div><div style="transform: translateZ(10px);">`;
+    html += `</div>
+      </div>
+      
+      <!-- At Risk Students Card (Span 4 cols) -->
+      <div class="bento-item col-4 row-1" style="height:auto;">
+        <div class="bento-header" style="margin-bottom: var(--sp-4);">
+          <h3>Mahasiswa Perlu Perhatian</h3>
+          <a href="#/students" data-nav="students" class="text-xs text-muted" style="font-weight:700;">Semua Bimbingan</a>
+        </div>
+        <div class="list-group" style="margin-top:0; flex-direction:row; gap:var(--sp-4); overflow-x:auto; padding-bottom:var(--sp-2);">`;
+        
     const atRisk = K.BIMBINGAN.filter(s => s.ipk < 3.5).slice(0,4);
     if (atRisk.length === 0) {
-      html += `<div class="card-pad text-muted text-sm">Semua mahasiswa bimbingan dalam performa baik.</div>`;
+      html += `<div class="text-sm text-muted">Semua mahasiswa bimbingan dalam performa baik.</div>`;
     } else {
       atRisk.forEach(s => {
-        html += `<div class="flex items-center gap-3" style="padding: var(--sp-3) var(--sp-6); border-bottom: 1px solid var(--stone-100);">
+        html += `<div class="list-item" style="flex:1; min-width:200px;">
           <div class="avatar" style="width:36px; height:36px; font-size:var(--fs-xs);">${s.name.split(' ').map(w=>w[0]).slice(0,2).join('')}</div>
-          <div style="flex:1; min-width:0;">
-            <div style="font-weight:600; color:var(--text-strong); font-size:var(--fs-sm);">${s.name}</div>
-            <div class="text-xs text-muted mono">${s.nim}</div>
+          <div class="list-content">
+            <div class="list-title" style="font-size:12px;">${s.name}</div>
+            <div class="list-subtitle mono">${s.nim}</div>
           </div>
           <span class="badge ${s.ipk<3.0?'badge-danger':'badge-warning'}">IPK ${s.ipk.toFixed(2)}</span>
         </div>`;
       });
     }
-    html += `</div></div></div>`;
+        
+    html += `</div>
+      </div>
+      
+    </div>`;
+    // --- BENTO GRID END ---
     return html;
   };
 
