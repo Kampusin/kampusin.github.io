@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { motion } from 'framer-motion';
-import { Mail, Lock, AlertCircle } from 'lucide-react';
+import { Mail, Lock, AlertCircle, GraduationCap } from 'lucide-react';
 
 interface LoginProps {
   onDemoLogin?: () => void;
@@ -59,8 +59,8 @@ export function Login({ onDemoLogin }: LoginProps) {
         className="relative z-10 w-full max-w-md p-6 sm:p-10 mx-4 bg-white/5 backdrop-blur-xl border border-white/10 shadow-[0_30px_60px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.1)] rounded-[2rem]"
       >
         <div className="flex flex-col items-center mb-8">
-          <div className="w-14 h-14 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mb-4 shadow-[0_0_20px_rgba(79,70,229,0.5)] text-white font-bold text-2xl">
-            K
+          <div className="w-14 h-14 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mb-4 shadow-[0_0_20px_rgba(79,70,229,0.5)] text-white">
+            <GraduationCap size={32} strokeWidth={2.5} />
           </div>
           <h1 className="text-2xl font-bold text-white tracking-tight">Kampusin</h1>
         </div>

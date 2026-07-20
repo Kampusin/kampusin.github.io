@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { motion } from 'framer-motion';
-import { 
   LayoutDashboard, Calendar, FileCheck, Award, BookOpen, 
-  Bell, User, LogOut, Search
+  Bell, User, LogOut, Search, GraduationCap, Megaphone, 
+  CreditCard, ChevronRight, Clock, MapPin
 } from 'lucide-react';
 import clsx from 'clsx';
 
@@ -61,8 +61,8 @@ export function Dashboard({ session, onLogout }: DashboardProps) {
       {/* Sidebar Desktop */}
       <aside className="hidden md:flex flex-col w-[260px] fixed h-screen p-6 bg-white border-r border-slate-200">
         <div className="flex items-center gap-3 mb-10 px-2">
-          <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg text-white font-bold text-xl">
-            K
+          <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg text-white">
+            <GraduationCap size={24} strokeWidth={2.5} />
           </div>
           <span className="font-bold text-xl tracking-tight">Kampus<span className="text-indigo-600">in</span></span>
         </div>
@@ -194,6 +194,62 @@ export function Dashboard({ session, onLogout }: DashboardProps) {
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+
+          {/* Card 4 - Announcements */}
+          <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm hover:shadow-lg transition-shadow xl:col-span-2 row-span-2">
+            <div className="flex justify-between items-start mb-6">
+              <h3 className="font-semibold text-slate-500">Pengumuman Terbaru</h3>
+              <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center">
+                <Megaphone size={20} />
+              </div>
+            </div>
+            <div className="flex flex-col gap-4">
+              <div className="group cursor-pointer">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="px-2 py-0.5 bg-red-100 text-red-700 rounded text-[10px] font-bold tracking-wider uppercase">Penting</span>
+                  <span className="text-xs text-slate-400">20 Jul 2026</span>
+                </div>
+                <h4 className="font-bold text-slate-800 group-hover:text-indigo-600 transition-colors">Batas Akhir Pembayaran UKT Semester Ganjil</h4>
+                <p className="text-sm text-slate-500 mt-1 line-clamp-2">Pembayaran Uang Kuliah Tunggal (UKT) semester ganjil tahun akademik 2026/2027 diperpanjang hingga tanggal 10 Agustus 2026.</p>
+              </div>
+              <div className="w-full h-px bg-slate-100"></div>
+              <div className="group cursor-pointer">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-[10px] font-bold tracking-wider uppercase">Akademik</span>
+                  <span className="text-xs text-slate-400">18 Jul 2026</span>
+                </div>
+                <h4 className="font-bold text-slate-800 group-hover:text-indigo-600 transition-colors">Jadwal Pengisian KRS (Kartu Rencana Studi)</h4>
+                <p className="text-sm text-slate-500 mt-1 line-clamp-2">Pengisian KRS bagi mahasiswa angkatan 2023 dan 2024 akan dibuka mulai tanggal 1 Agustus 2026 melalui portal akademik.</p>
+              </div>
+            </div>
+            <button className="mt-6 text-sm font-bold text-indigo-600 flex items-center gap-1 hover:gap-2 transition-all">
+              Lihat semua pengumuman <ChevronRight size={16} />
+            </button>
+          </div>
+
+          {/* Card 5 - Tuition Bill */}
+          <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm hover:shadow-lg transition-shadow relative overflow-hidden xl:col-span-2">
+            <div className="absolute top-0 right-0 p-8 opacity-5">
+              <CreditCard size={120} />
+            </div>
+            <div className="relative z-10">
+              <div className="flex justify-between items-start mb-6">
+                <h3 className="font-semibold text-slate-500">Tagihan UKT Aktif</h3>
+                <span className="px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-bold">Belum Dibayar</span>
+              </div>
+              <div className="text-xs text-slate-500 mb-1">Semester Ganjil 2026/2027</div>
+              <div className="text-4xl font-black text-slate-900 mb-6">Rp 4.500.000</div>
+              
+              <div className="flex gap-3">
+                <button className="flex-1 bg-slate-900 text-white font-semibold py-3 rounded-xl hover:bg-slate-800 transition-colors">
+                  Bayar Sekarang
+                </button>
+                <button className="px-4 py-3 bg-slate-100 text-slate-700 font-semibold rounded-xl hover:bg-slate-200 transition-colors">
+                  Rincian
+                </button>
+              </div>
             </div>
           </div>
 
