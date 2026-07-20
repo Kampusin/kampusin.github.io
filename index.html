@@ -3,12 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://ohviyawkiwacafwodbbr.supabase.co; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://ohviyawkiwacafwodbbr.supabase.co; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
-  <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
-  <meta name="theme-color" content="#4f46e5">
-  <title>Kampusin — Sistem Informasi Akademik</title>
-  <meta name="description" content="Kampusin: portal akademik untuk mahasiswa & dosen. Jadwal kuliah, absensi, nilai, dan pengumuman dalam satu dashboard responsif.">
+  <meta name="theme-color" content="#0f172a">
+  <title>Kampusin — Autentikasi</title>
   
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="manifest" href="/manifest.json">
@@ -17,178 +15,184 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
   <link rel="stylesheet" href="/assets/css/styles.css">
 
   <style>
-    /* Login-specific tweaks */
-    .auth-card-inner { animation: fadeInUp 500ms cubic-bezier(0.25, 1, 0.5, 1); }
+    /* Premium Animated Background */
+    body {
+      margin: 0; padding: 0; overflow: hidden;
+      background: #0f172a;
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh; min-height: 100dvh;
+      font-family: var(--font-sans);
+    }
+    
+    .bg-fluid {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      z-index: 0; overflow: hidden;
+    }
+    .orb {
+      position: absolute; filter: blur(80px); border-radius: 50%;
+      animation: float 20s infinite ease-in-out;
+      opacity: 0.6;
+    }
+    .orb-1 { width: 50vw; height: 50vw; background: rgba(79, 70, 229, 0.4); top: -10%; left: -10%; animation-delay: 0s; }
+    .orb-2 { width: 40vw; height: 40vw; background: rgba(147, 51, 234, 0.3); bottom: -10%; right: -10%; animation-delay: -5s; }
+    .orb-3 { width: 30vw; height: 30vw; background: rgba(59, 130, 246, 0.3); top: 40%; left: 60%; animation-delay: -10s; }
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(5%, 10%) scale(1.1); }
+      66% { transform: translate(-10%, -5%) scale(0.9); }
+    }
+
+    /* Glassmorphism Tilt Card */
+    .auth-container {
+      position: relative; z-index: 10;
+      width: 100%; max-width: 420px; padding: var(--sp-4);
+      perspective: 1000px;
+    }
+    .auth-card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 30px 60px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+      border-radius: var(--r-2xl);
+      padding: var(--sp-8);
+      color: white;
+      transform-style: preserve-3d;
+      transition: box-shadow 0.3s ease;
+    }
+    
+    .brand-glow {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      margin-bottom: var(--sp-8); transform: translateZ(30px);
+    }
+    .brand-glow img {
+      width: 56px; height: 56px; margin-bottom: var(--sp-4);
+      filter: drop-shadow(0 0 15px rgba(79, 70, 229, 0.6));
+    }
+    .brand-glow h1 { font-size: var(--fs-xl); color: white; margin: 0; font-weight: 800; letter-spacing: -0.02em; }
+    
+    .auth-tabs {
+      display: flex; background: rgba(0,0,0,0.2); border-radius: var(--r-lg);
+      padding: 4px; margin-bottom: var(--sp-6); transform: translateZ(20px);
+    }
+    .auth-tab {
+      flex: 1; padding: var(--sp-2) 0; font-size: var(--fs-sm); font-weight: 600;
+      color: rgba(255,255,255,0.5); border-radius: var(--r-md); transition: all var(--transition);
+      text-align: center; cursor: pointer; border: none; background: transparent;
+    }
+    .auth-tab.active { background: rgba(255,255,255,0.15); color: white; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+
+    .field { transform: translateZ(20px); margin-bottom: var(--sp-5); }
+    .field-label { color: rgba(255,255,255,0.8); font-size: var(--fs-sm); font-weight: 500; margin-bottom: var(--sp-2); display: block; }
+    .input-group { position: relative; display: flex; align-items: center; }
+    .input-icon { position: absolute; left: 16px; color: rgba(255,255,255,0.4); display: flex; }
+    .input {
+      width: 100%; padding: 14px 16px 14px 44px;
+      background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--r-md); color: white; font-size: var(--fs-base);
+      transition: all var(--transition); outline: none;
+    }
+    .input:focus { border-color: var(--brand-400); background: rgba(0,0,0,0.4); box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2); }
+    .input::placeholder { color: rgba(255,255,255,0.3); }
+    
+    .btn-login {
+      width: 100%; padding: 16px; margin-top: var(--sp-2);
+      background: linear-gradient(135deg, var(--brand-600), var(--brand-500));
+      color: white; font-weight: 600; font-size: var(--fs-base);
+      border: none; border-radius: var(--r-md); cursor: pointer;
+      box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3);
+      transform: translateZ(25px); transition: all 0.2s;
+    }
+    .btn-login:hover { transform: translateZ(30px) translateY(-2px); box-shadow: 0 15px 25px rgba(79, 70, 229, 0.5); }
+    .btn-login:active { transform: translateZ(10px) translateY(0); }
+    
     .form-error {
-      display: none; align-items: center; gap: var(--sp-2);
-      background: var(--danger-bg); color: var(--danger);
-      padding: var(--sp-3) var(--sp-4); border-radius: var(--r-md);
-      font-size: var(--fs-sm); margin-bottom: var(--sp-4);
-      border: 1px solid rgba(239, 68, 68, 0.2);
+      background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fca5a5; padding: var(--sp-3); border-radius: var(--r-md);
+      font-size: var(--fs-sm); margin-bottom: var(--sp-4); display: none;
+      align-items: center; gap: var(--sp-2); transform: translateZ(15px);
     }
-    .form-error.show { display: flex; animation: fadeInUp 300ms ease; }
-    .demo-account {
-      background: var(--stone-50); border: 1px dashed var(--stone-300);
-      border-radius: var(--r-md); padding: var(--sp-3) var(--sp-4);
-      margin-top: var(--sp-4); transition: var(--transition);
+    .form-error.show { display: flex; animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+    
+    @keyframes shake {
+      10%, 90% { transform: translate3d(-1px, 0, 15px); }
+      20%, 80% { transform: translate3d(2px, 0, 15px); }
+      30%, 50%, 70% { transform: translate3d(-4px, 0, 15px); }
+      40%, 60% { transform: translate3d(4px, 0, 15px); }
     }
-    .demo-account:hover { border-color: var(--brand-300); background: var(--brand-50); }
-    .demo-account summary {
-      cursor: pointer; font-size: var(--fs-sm); font-weight: 600;
-      color: var(--brand-700); display: flex; align-items: center; gap: var(--sp-2);
+
+    .credit-footer {
+      text-align: center; margin-top: var(--sp-6); font-size: 11px;
+      color: rgba(255,255,255,0.3); transform: translateZ(10px);
     }
-    .demo-account .demo-grid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-2);
-      margin-top: var(--sp-3); font-size: var(--fs-xs);
-    }
-    .demo-account .demo-grid div { color: var(--stone-600); }
-    .demo-account code {
-      background: var(--surface-solid); padding: 4px 8px; border-radius: 6px;
-      font-family: var(--font-mono); color: var(--text-strong);
-      border: 1px solid var(--stone-200); display: inline-block; margin-top: 4px;
+    
+    @media (max-width: 600px) {
+      .auth-card { padding: var(--sp-6); }
+      .bg-fluid { display: none; } /* Simpler on mobile */
+      body { background: linear-gradient(135deg, #0f172a, #1e1b4b); }
     }
   </style>
 </head>
 <body>
 
-<div class="auth-wrap">
-  <!-- Brand / hero side (desktop only) -->
-  <aside class="auth-aside">
-    <div>
-      <div class="brand">
-        <img src="/assets/img/logo.svg" alt="" class="brand-mark">
-        <span class="brand-name" style="color: white; font-size: 1.5rem;">Kampus<span class="accent" style="color: var(--accent-400);">in</span></span>
-      </div>
-    </div>
-
-    <div>
-      <h2>Portal Akademik<br>Masa Depan.</h2>
-      <p style="color: rgba(255,255,255,0.85); margin-bottom: var(--sp-8); font-size: var(--fs-lg); max-width: 400px;">
-        Dirancang ulang dengan UI/UX premium. Cepat, responsif, dan elegan.
-      </p>
-
-      <div class="auth-feature">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-        <div>
-          <strong style="color:white; display:block; margin-bottom:4px;">Jadwal Cerdas</strong>
-          <p>Selalu sinkron, tampil sempurna di layar sentuh maupun desktop.</p>
-        </div>
-      </div>
-      <div class="auth-feature">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-        <div>
-          <strong style="color:white; display:block; margin-bottom:4px;">Absensi Instan</strong>
-          <p>Check-in mandiri mahasiswa dan rekapitulasi real-time untuk dosen.</p>
-        </div>
-      </div>
-      <div class="auth-feature">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-        <div>
-          <strong style="color:white; display:block; margin-bottom:4px;">Nilai & Transkrip</strong>
-          <p>Pantau IPK, pratinjau nilai sebelum publikasi, semua dalam satu klik.</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="credit" style="color: rgba(255,255,255,0.7); font-size: 0.85rem;">
-      <strong style="color: rgba(255,255,255,0.95); font-weight: 600;">Develop by Nugraha Nastya</strong><br>
-      Yogyakarta · 2026
-    </div>
-  </aside>
-
-  <!-- Login form side -->
-  <main class="auth-main">
-    <div class="auth-card auth-card-inner">
-      <!-- Mobile brand -->
-      <div class="brand" style="margin-bottom: var(--sp-8); justify-content: center; display: flex;">
-        <img src="/assets/img/logo.svg" alt="Kampusin" class="brand-mark">
-        <span class="brand-name">Kampus<span class="accent">in</span></span>
-      </div>
-
-      <h1 style="font-size: var(--fs-xl); margin-bottom: var(--sp-2); text-align: center;">Selamat Datang</h1>
-      <p class="text-muted text-sm" style="margin-bottom: var(--sp-8); text-align: center;">Masuk dengan akun institusi Anda.</p>
-
-      <!-- Role tabs -->
-      <div class="auth-tabs" role="tablist">
-        <button class="auth-tab active" data-role="mahasiswa" role="tab" aria-selected="true">Mahasiswa</button>
-        <button class="auth-tab" data-role="dosen" role="tab" aria-selected="false">Dosen / TU</button>
-      </div>
-
-      <div class="form-error" id="loginError" role="alert">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        <span id="loginErrorText">Email atau kata sandi salah.</span>
-      </div>
-
-      <form id="loginForm" novalidate>
-        <div class="field">
-          <label class="field-label" for="email">Email Kampus</label>
-          <div class="input-group">
-            <span class="input-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-            </span>
-            <input type="email" id="email" name="email" class="input" placeholder="nugraha.nastya@kampusin.ac.id" autocomplete="username" required>
-          </div>
-        </div>
-
-        <div class="field">
-          <label class="field-label" for="password">Kata Sandi</label>
-          <div class="input-group">
-            <span class="input-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-            </span>
-            <input type="password" id="password" name="password" class="input" placeholder="••••••••" autocomplete="current-password" required>
-            <button type="button" class="input-affix" id="togglePassword" aria-label="Tampilkan kata sandi">
-              <svg id="eyeIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-            </button>
-          </div>
-        </div>
-
-        <div class="flex items-center justify-between" style="margin-bottom: var(--sp-8);">
-          <label class="flex items-center gap-2 text-sm" style="cursor: pointer; color: var(--text-muted); font-weight: 500;">
-            <input type="checkbox" id="remember" style="width:16px;height:16px;accent-color: var(--brand-600); border-radius: 4px;">
-            Ingat saya
-          </label>
-          <a href="#" class="text-sm" style="color: var(--brand-600); font-weight: 600; text-decoration: none;" onclick="event.preventDefault(); alert('Hubungi admin TU kampus untuk reset kata sandi Anda.');">Lupa sandi?</a>
-        </div>
-
-        <button type="submit" class="btn btn-primary btn-block btn-lg">
-          <span>Masuk ke Dashboard</span>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-        </button>
-      </form>
-
-      <details class="demo-account">
-        <summary>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-          Informasi Akun Demo
-        </summary>
-        <div class="demo-grid">
-          <div>
-            <strong style="color: var(--text-strong); display:block; margin-bottom: 4px;">🎓 Mahasiswa</strong>
-            <code>nugraha.nastya@kampusin.ac.id</code><br>
-            <code>mhs123</code>
-          </div>
-          <div>
-            <strong style="color: var(--text-strong); display:block; margin-bottom: 4px;">👨‍🏫 Dosen / TU</strong>
-            <code>budi.santoso@kampusin.ac.id</code><br>
-            <code>dosen123</code>
-          </div>
-        </div>
-      </details>
-
-      <div class="divider"></div>
-      <p class="credit" style="text-align: center;">
-        © 2026 Kampusin<br>
-        Develop by <strong>Nugraha Nastya</strong> · Yogyakarta
-      </p>
-    </div>
-  </main>
+<div class="bg-fluid">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
 </div>
 
+<div class="auth-container">
+  <div class="auth-card" data-tilt data-tilt-max="10" data-tilt-speed="400" data-tilt-perspective="1000" data-tilt-glare data-tilt-max-glare="0.2">
+    
+    <div class="brand-glow">
+      <img src="/assets/img/logo.svg" alt="Kampusin Logo">
+      <h1>Kampusin</h1>
+    </div>
+
+    <div class="auth-tabs" role="tablist">
+      <button class="auth-tab active" data-role="mahasiswa" role="tab">Mahasiswa</button>
+      <button class="auth-tab" data-role="dosen" role="tab">Dosen & TU</button>
+    </div>
+
+    <div class="form-error" id="loginError">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span id="loginErrorText">Kredensial tidak valid.</span>
+    </div>
+
+    <form id="loginForm" novalidate>
+      <div class="field">
+        <label class="field-label" for="email">Email</label>
+        <div class="input-group">
+          <span class="input-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </span>
+          <input type="email" id="email" class="input" placeholder="nim@kampusin.ac.id" required>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="password">Sandi</label>
+        <div class="input-group">
+          <span class="input-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </span>
+          <input type="password" id="password" class="input" placeholder="••••••••" required>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-login" id="submitBtn">Masuk</button>
+    </form>
+
+    <div class="credit-footer">
+      Develop by <strong>Nugraha Nastya</strong> · Yogyakarta
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
 <script src="/assets/js/app.js"></script>
 <script src="/assets/js/supabase-client.js"></script>
 <script src="/assets/js/db.js"></script>
@@ -204,71 +208,64 @@
     const errText = document.getElementById('loginErrorText');
     const emailInput = document.getElementById('email');
     const passInput = document.getElementById('password');
-    const togglePass = document.getElementById('togglePassword');
-    const eyeIcon = document.getElementById('eyeIcon');
+    const btn = document.getElementById('submitBtn');
 
     let currentRole = 'mahasiswa';
 
     tabs.forEach(tab => {
       tab.addEventListener('click', () => {
-        tabs.forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected','false'); });
-        tab.classList.add('active'); tab.setAttribute('aria-selected','true');
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
         currentRole = tab.dataset.role;
-        emailInput.placeholder = currentRole === 'mahasiswa'
-          ? 'nugraha.nastya@kampusin.ac.id'
-          : 'dosen@kampusin.ac.id';
+        emailInput.placeholder = currentRole === 'mahasiswa' ? 'nim@kampusin.ac.id' : 'nidn@kampusin.ac.id';
         emailInput.value = ''; passInput.value = '';
-        hideError();
+        errBox.classList.remove('show');
       });
     });
 
-    togglePass.addEventListener('click', () => {
-      const isPwd = passInput.type === 'password';
-      passInput.type = isPwd ? 'text' : 'password';
-      eyeIcon.innerHTML = isPwd
-        ? '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>'
-        : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
-    });
-
-    function showError(msg) { errText.textContent = msg; errBox.classList.add('show'); }
-    function hideError() { errBox.classList.remove('show'); }
-
-    emailInput.addEventListener('input', hideError);
-    passInput.addEventListener('input', hideError);
-
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      hideError();
+      errBox.classList.remove('show');
 
       const email = emailInput.value.trim().toLowerCase();
       const password = passInput.value;
 
-      if (!email || !password) { showError('Mohon isi email dan kata sandi.'); return; }
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError('Format email tidak valid.'); return; }
+      if (!email || !password) {
+        errText.textContent = 'Isi email dan kata sandi.';
+        errBox.classList.add('show');
+        return;
+      }
 
-      const btn = form.querySelector('button[type=submit]');
-      const originalHTML = btn.innerHTML;
-      btn.innerHTML = 'Memproses…';
+      const originalText = btn.textContent;
+      btn.textContent = 'Memproses...';
       btn.disabled = true;
 
       try {
         const result = await KampusinDB.login(email, password, currentRole);
         if (result.ok) {
-          btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Berhasil';
+          btn.textContent = 'Berhasil';
+          btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
           setTimeout(() => window.location.href = '/dashboard.html', 500);
         } else {
-          showError(result.error || 'Email atau kata sandi salah.');
+          errText.textContent = result.error || 'Akses ditolak.';
+          errBox.classList.add('show');
           passInput.value = '';
-          passInput.focus();
-          btn.innerHTML = originalHTML;
+          btn.textContent = originalText;
           btn.disabled = false;
         }
       } catch (err) {
-        showError('Gagal terhubung ke server. Coba lagi.');
-        btn.innerHTML = originalHTML;
+        errText.textContent = 'Gagal terhubung.';
+        errBox.classList.add('show');
+        btn.textContent = originalText;
         btn.disabled = false;
       }
     });
+
+    // Disable tilt on mobile for performance
+    if (window.innerWidth <= 768) {
+      const card = document.querySelector('.auth-card');
+      if (card && card.vanillaTilt) card.vanillaTilt.destroy();
+    }
   })();
 </script>
 

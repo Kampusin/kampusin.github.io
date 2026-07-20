@@ -17,8 +17,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
   <link rel="stylesheet" href="/assets/css/styles.css">
+  
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
 </head>
 <body>
 
@@ -290,8 +292,24 @@
     const fn = VIEWS[id] || VIEWS.dashboard;
     const html = fn();
     const el = document.getElementById('view');
-    el.innerHTML = `<div class="view">${html}</div>`;
+    el.innerHTML = `<div class="view" style="perspective: 1000px;">${html}</div>`;
     el.scrollTop = 0;
+    
+    // Initialize VanillaTilt for elements with data-tilt
+    if (window.innerWidth > 768) {
+      setTimeout(() => {
+        const tiltEls = el.querySelectorAll('[data-tilt]');
+        if (tiltEls.length) {
+          VanillaTilt.init(tiltEls, { max: 5, speed: 400, glare: true, "max-glare": 0.1 });
+        }
+      }, 50);
+    }
+
+    // Call afterRender hook if exists (for charts etc)
+    if (VIEWS[`${id}_afterRender`]) {
+      setTimeout(VIEWS[`${id}_afterRender`], 100);
+    }
+
     // Async refresh from backend (replace mock data with real data)
     if (VIEWS._async) VIEWS._async(id);
   }
@@ -344,35 +362,45 @@
 
     // Stats
     html += `<div class="stats-grid">
-      <div class="stat-card">
+      <div class="stat-card" data-tilt>
         <div class="stat-icon stat-icon-brand">${I.grades}</div>
         <div class="stat-value">${profile.ipk.toFixed(2)}</div>
         <div class="stat-label">IPK kumulatif</div>
         <div class="stat-trend up">${I.trendUp} +0.12 sem ini</div>
       </div>
-      <div class="stat-card">
+      <div class="stat-card" data-tilt>
         <div class="stat-icon stat-icon-green">${I.attendance}</div>
         <div class="stat-value">${attAvg}%</div>
         <div class="stat-label">Rata-rata kehadiran</div>
         <div class="stat-trend up">${I.trendUp} Stabil</div>
       </div>
-      <div class="stat-card">
+      <div class="stat-card" data-tilt>
         <div class="stat-icon stat-icon-amber">${I.courses}</div>
         <div class="stat-value">${profile.sksLulus}<span style="font-size:var(--fs-md); color: var(--text-muted);">/${profile.sksTotal}</span></div>
         <div class="stat-label">SKS lulus</div>
         <div class="progress" style="margin-top: var(--sp-2);"><div class="progress-bar" style="width:${sksPercent}%"></div></div>
       </div>
-      <div class="stat-card">
+      <div class="stat-card" data-tilt>
         <div class="stat-icon stat-icon-blue">${I.schedule}</div>
         <div class="stat-value">${todayClasses.length}</div>
         <div class="stat-label">Kelas hari ini (${todayName})</div>
       </div>
     </div>`;
 
-    // Today + announcements
+    // Charts & Today
     html += `<div class="grid-2">
-      <div class="card">
-        <div class="card-header flex items-center justify-between">
+      <div class="card" data-tilt data-tilt-max="2" data-tilt-glare="false" style="transform-style: preserve-3d; display: flex; flex-direction: column;">
+        <div class="card-header flex items-center justify-between" style="transform: translateZ(20px);">
+          <h3>Analitik Akademik</h3>
+          <span class="badge badge-brand">Semester 4</span>
+        </div>
+        <div class="card-pad" style="flex:1; position:relative; min-height: 250px; transform: translateZ(30px);">
+          <canvas id="dashboardChart"></canvas>
+        </div>
+      </div>
+
+      <div class="card" data-tilt data-tilt-max="2" data-tilt-glare="false" style="transform-style: preserve-3d;">
+        <div class="card-header flex items-center justify-between" style="transform: translateZ(20px);">
           <h3>Jadwal hari ini</h3>
           <span class="text-xs text-muted">${todayName}, 20 Jul 2026</span>
         </div>`;
@@ -403,8 +431,8 @@
 
     // Announcements
     const topAnn = K.ANNOUNCEMENTS.slice(0,3);
-    html += `<div class="card">
-      <div class="card-header flex items-center justify-between">
+    html += `<div class="card" data-tilt data-tilt-max="2" data-tilt-glare="false" style="transform-style: preserve-3d;">
+      <div class="card-header flex items-center justify-between" style="transform: translateZ(20px);">
         <h3>Pengumuman terbaru</h3>
         <a href="#/announce" data-nav="announce" class="text-xs" style="color:var(--brand-600); font-weight:600;">Lihat semua</a>
       </div>
@@ -422,6 +450,44 @@
     html += `</div></div></div>`; // close card + grid-2
 
     return html;
+  };
+
+  VIEWS.dashboard_afterRender = function() {
+    const ctx = document.getElementById('dashboardChart');
+    if (!ctx) return;
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Smt 1', 'Smt 2', 'Smt 3', 'Smt 4'],
+        datasets: [{
+          label: 'IPK',
+          data: [3.5, 3.7, 3.65, 3.8],
+          backgroundColor: 'rgba(99, 102, 241, 0.8)',
+          borderRadius: 6,
+          borderSkipped: false
+        }, {
+          label: 'Kehadiran (%)',
+          data: [95, 92, 98, 96],
+          type: 'line',
+          borderColor: '#10b981',
+          tension: 0.4,
+          borderWidth: 3,
+          pointBackgroundColor: '#ffffff',
+          pointBorderColor: '#10b981'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8 } }
+        },
+        scales: {
+          y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+          x: { grid: { display: false } }
+        }
+      }
+    });
   };
 
   VIEWS.schedule = function() {
@@ -689,16 +755,25 @@
       `${profile.jabatan} · ${profile.prodi}`);
 
     html += `<div class="stats-grid">
-      <div class="stat-card"><div class="stat-icon stat-icon-brand">${I.courses}</div><div class="stat-value">${K.DOSEN_COURSES.length}</div><div class="stat-label">Mata kuliah ampu</div></div>
-      <div class="stat-card"><div class="stat-icon stat-icon-green">${I.students}</div><div class="stat-value">${totalStudents}</div><div class="stat-label">Total mahasiswa</div></div>
-      <div class="stat-card"><div class="stat-icon stat-icon-amber">${I.profile}</div><div class="stat-value">${K.BIMBINGAN.length}</div><div class="stat-label">Bimbingan PA</div></div>
-      <div class="stat-card"><div class="stat-icon stat-icon-blue">${I.schedule}</div><div class="stat-value">${todayClasses.length}</div><div class="stat-label">Kelas hari ini</div></div>
+      <div class="stat-card" data-tilt><div class="stat-icon stat-icon-brand">${I.courses}</div><div class="stat-value">${K.DOSEN_COURSES.length}</div><div class="stat-label">Mata kuliah ampu</div></div>
+      <div class="stat-card" data-tilt><div class="stat-icon stat-icon-green">${I.students}</div><div class="stat-value">${totalStudents}</div><div class="stat-label">Total mahasiswa</div></div>
+      <div class="stat-card" data-tilt><div class="stat-icon stat-icon-amber">${I.profile}</div><div class="stat-value">${K.BIMBINGAN.length}</div><div class="stat-label">Bimbingan PA</div></div>
+      <div class="stat-card" data-tilt><div class="stat-icon stat-icon-blue">${I.schedule}</div><div class="stat-value">${todayClasses.length}</div><div class="stat-label">Kelas hari ini</div></div>
     </div>`;
 
     // Upcoming sessions to open attendance
     html += `<div class="grid-2">
-      <div class="card">
-        <div class="card-header flex items-center justify-between">
+      <div class="card" data-tilt data-tilt-max="2" data-tilt-glare="false" style="transform-style: preserve-3d; display: flex; flex-direction: column;">
+        <div class="card-header flex items-center justify-between" style="transform: translateZ(20px);">
+          <h3>Statistik Kehadiran Mahasiswa</h3>
+        </div>
+        <div class="card-pad" style="flex:1; position:relative; min-height: 250px; transform: translateZ(30px);">
+          <canvas id="dosenDashboardChart"></canvas>
+        </div>
+      </div>
+      
+      <div class="card" data-tilt data-tilt-max="2" data-tilt-glare="false" style="transform-style: preserve-3d;">
+        <div class="card-header flex items-center justify-between" style="transform: translateZ(20px);">
           <h3>Buka sesi absensi</h3>
           <span class="text-xs text-muted">${todayName}</span>
         </div>`;
@@ -718,11 +793,11 @@
     html += `</div>`;
 
     // Recent advisees with low IPK alert
-    html += `<div class="card">
-      <div class="card-header flex items-center justify-between">
+    html += `<div class="card" data-tilt data-tilt-max="2" data-tilt-glare="false" style="transform-style: preserve-3d; grid-column: 1 / -1;">
+      <div class="card-header flex items-center justify-between" style="transform: translateZ(20px);">
         <h3>Mahasiswa perlu perhatian</h3>
         <a href="#/students" data-nav="students" class="text-xs" style="color:var(--brand-600); font-weight:600;">Semua</a>
-      </div><div>`;
+      </div><div style="transform: translateZ(10px);">`;
     const atRisk = K.BIMBINGAN.filter(s => s.ipk < 3.5).slice(0,4);
     if (atRisk.length === 0) {
       html += `<div class="card-pad text-muted text-sm">Semua mahasiswa bimbingan dalam performa baik.</div>`;
@@ -740,6 +815,29 @@
     }
     html += `</div></div></div>`;
     return html;
+  };
+
+  VIEWS._dosenDashboard_afterRender = function() {
+    const ctx = document.getElementById('dosenDashboardChart');
+    if (!ctx) return;
+    new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Hadir', 'Izin', 'Sakit', 'Alpha'],
+        datasets: [{
+          data: [75, 10, 5, 10],
+          backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#ef4444'],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'right', labels: { usePointStyle: true, boxWidth: 8 } }
+        },
+        cutout: '75%'
+      }
+    });
   };
 
   VIEWS._dosenAttendance = function() {
