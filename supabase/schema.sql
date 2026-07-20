@@ -344,8 +344,8 @@ create policy "announcements_modify_staff" on public.announcements
 -- ⚠️ PENTING: Sebelum menjalankan bagian ini, Anda harus daftarkan
 --    2 user demo lewat Supabase Dashboard → Authentication → Users →
 --    Add user, dengan email:
---      - andi.pratama@kampusin.ac.id  (password: mhs123)
---      - budi.santoso@kampusin.ac.id  (password: dosen123)
+--      - nugraha.nastya@kampusin.ac.id  (password: mhs123)
+--      - budi.santoso@kampusin.ac.id   (password: dosen123)
 --    Setelah itu, jalankan SQL di bawah untuk melengkapi profil mereka.
 --    Kalau belum daftar, skip bagian ini dulu.
 -- ============================================================
@@ -353,11 +353,11 @@ create policy "announcements_modify_staff" on public.announcements
 -- Update profile untuk user demo (asumsikan sudah signup)
 -- Catatan: jalankan SETELAH kedua user demo signup di Supabase Auth
 update public.profiles set
-  role = 'mahasiswa', full_name = 'Andi Pratama',
+  role = 'mahasiswa', full_name = 'Nugraha Nastya',
   nim = '2024/5312345', prodi = 'Teknik Informatika',
   fakultas = 'Fakultas Teknik', angkatan = 2024, semester = 4,
   ipk = 3.72, sks_lulus = 84
-where email = 'andi.pratama@kampusin.ac.id';
+where email = 'nugraha.nastya@kampusin.ac.id';
 
 update public.profiles set
   role = 'dosen', full_name = 'Dr. Budi Santoso, M.Kom',
@@ -365,10 +365,10 @@ update public.profiles set
   prodi = 'Teknik Informatika', fakultas = 'Fakultas Teknik'
 where email = 'budi.santoso@kampusin.ac.id';
 
--- Set PA (Andi dibimbing Budi)
+-- Set PA (Nugraha dibimbing Budi)
 update public.profiles set dosen_pa_id = (
   select id from public.profiles where email = 'budi.santoso@kampusin.ac.id'
-) where email = 'andi.pratama@kampusin.ac.id';
+) where email = 'nugraha.nastya@kampusin.ac.id';
 
 -- ============================================================
 -- SEED: Mata kuliah (jalan dengan / tanpa user demo — lewat anon)

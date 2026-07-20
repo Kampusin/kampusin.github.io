@@ -163,7 +163,7 @@
         <div class="demo-grid">
           <div>
             <strong style="color: var(--text-strong); display:block; margin-bottom: 2px;">Mahasiswa</strong>
-            <code>andi.pratama@kampusin.ac.id</code><br>
+            <code>nugraha.nastya@kampusin.ac.id</code><br>
             <code>mhs123</code>
           </div>
           <div>
@@ -211,7 +211,9 @@
         currentRole = tab.dataset.role;
         // Pre-fill placeholder hint
         const prefix = currentRole === 'dosen' ? 'dosen' : 'mahasiswa';
-        emailInput.placeholder = `nama.${prefix}@kampusin.ac.id`;
+        emailInput.placeholder = currentRole === 'mahasiswa'
+          ? 'nugraha.nastya@kampusin.ac.id'
+          : 'dosen@kampusin.ac.id';
         emailInput.value = ''; passInput.value = '';
         hideError();
       });

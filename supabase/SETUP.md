@@ -31,7 +31,7 @@ daftarkan 2 user demo:
 
 1. Di dashboard Supabase → **Authentication** → **Users** → **Add user**
 2. Tambah user pertama:
-   - Email: `andi.pratama@kampusin.ac.id`
+   - Email: `nugraha.nastya@kampusin.ac.id`
    - Password: `mhs123`
    - Auto Confirm User: **✅ centang**
    - Klik **Create user**
@@ -56,7 +56,7 @@ daftarkan 2 user demo:
    [Kampusin] Mode backend: Supabase aktif.
    ```
 3. Login pakai akun demo:
-   - Mahasiswa: `andi.pratama@kampusin.ac.id` / `mhs123`
+   - Mahasiswa: `nugraha.nastya@kampusin.ac.id` / `mhs123`
    - Dosen: `budi.santoso@kampusin.ac.id` / `dosen123`
 4. Kalau berhasil masuk → backend jalan. 🎉
 

@@ -40,12 +40,12 @@
      MOCK DATA — realistic Indonesian university context
      ---------------------------------------------------------- */
   const USERS = {
-    'andi.pratama@kampusin.ac.id': {
+    'nugraha.nastya@kampusin.ac.id': {
       password: 'mhs123', role: 'mahasiswa',
       profile: {
-        nim: '2024/5312345', name: 'Andi Pratama', email: 'andi.pratama@kampusin.ac.id',
+        nim: '2024/5312345', name: 'Nugraha Nastya', email: 'nugraha.nastya@kampusin.ac.id',
         prodi: 'Teknik Informatika', fakultas: 'Fakultas Teknik', angkatan: 2024,
-        semester: 4, dosenPa: 'Dr. Budi Santoso, M.Kom', avatar: 'AP',
+        semester: 4, dosenPa: 'Dr. Budi Santoso, M.Kom', avatar: 'NN',
         ipk: 3.72, sksLulus: 84, sksTotal: 144,
       },
     },
@@ -155,7 +155,7 @@
 
   // Lecturer: students to advise (PA)
   const BIMBINGAN = [
-    { nim:'2024/5312345', name:'Andi Pratama', prodi:'Teknik Informatika', semester:4, ipk:3.72, status:'aktif' },
+    { nim:'2024/5312345', name:'Nugraha Nastya', prodi:'Teknik Informatika', semester:4, ipk:3.72, status:'aktif' },
     { nim:'2024/5312346', name:'Bunga Lestari', prodi:'Teknik Informatika', semester:4, ipk:3.85, status:'aktif' },
     { nim:'2024/5312347', name:'Citra Dewi', prodi:'Teknik Informatika', semester:4, ipk:3.40, status:'aktif' },
     { nim:'2023/5312310', name:'Dimas Putra', prodi:'Teknik Informatika', semester:6, ipk:3.55, status:'kp' },

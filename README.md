@@ -28,7 +28,7 @@ HTML/CSS/JS — tanpa framework, tanpa build step, langsung jalan di GitHub Page
 
 | Role      | Email                            | Password  |
 |-----------|----------------------------------|-----------|
-| Mahasiswa | `andi.pratama@kampusin.ac.id`    | `mhs123`  |
+| Mahasiswa | `nugraha.nastya@kampusin.ac.id`    | `mhs123`  |
 | Dosen     | `budi.santoso@kampusin.ac.id`    | `dosen123` |
 
 ## Struktur
