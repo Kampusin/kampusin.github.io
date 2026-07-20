@@ -32,29 +32,57 @@ export function Grades() {
         </div>
       </div>
 
-      <div className="p-6 md:p-8 overflow-x-auto">
-        <table className="w-full text-left border-collapse min-w-[600px]">
-          <thead>
-            <tr className="border-b-2 border-slate-100">
-              <th className="pb-4 font-semibold text-slate-500 text-sm">Kode</th>
-              <th className="pb-4 font-semibold text-slate-500 text-sm">Mata Kuliah</th>
-              <th className="pb-4 font-semibold text-slate-500 text-sm text-center">SKS</th>
-              <th className="pb-4 font-semibold text-slate-500 text-sm text-center">Nilai Mutu</th>
-              <th className="pb-4 font-semibold text-slate-500 text-sm text-center">Indeks</th>
-            </tr>
-          </thead>
-          <tbody>
-            {gradesData.map((data, idx) => (
-              <tr key={idx} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
-                <td className="py-4 text-sm font-medium text-slate-500">{data.code}</td>
-                <td className="py-4 font-bold text-slate-800">{data.course}</td>
-                <td className="py-4 text-center font-medium text-slate-600">{data.credits}</td>
-                <td className="py-4 text-center font-bold text-indigo-600">{data.grade}</td>
-                <td className="py-4 text-center font-medium text-slate-600">{data.score.toFixed(2)}</td>
+      <div className="p-4 md:p-8">
+        {/* Desktop View */}
+        <div className="hidden md:block overflow-x-auto">
+          <table className="w-full text-left border-collapse min-w-[600px]">
+            <thead>
+              <tr className="border-b-2 border-slate-100">
+                <th className="pb-4 font-semibold text-slate-500 text-sm">Kode</th>
+                <th className="pb-4 font-semibold text-slate-500 text-sm">Mata Kuliah</th>
+                <th className="pb-4 font-semibold text-slate-500 text-sm text-center">SKS</th>
+                <th className="pb-4 font-semibold text-slate-500 text-sm text-center">Nilai Mutu</th>
+                <th className="pb-4 font-semibold text-slate-500 text-sm text-center">Indeks</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {gradesData.map((data, idx) => (
+                <tr key={idx} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
+                  <td className="py-4 text-sm font-medium text-slate-500">{data.code}</td>
+                  <td className="py-4 font-bold text-slate-800">{data.course}</td>
+                  <td className="py-4 text-center font-medium text-slate-600">{data.credits}</td>
+                  <td className="py-4 text-center font-bold text-indigo-600">{data.grade}</td>
+                  <td className="py-4 text-center font-medium text-slate-600">{data.score.toFixed(2)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Mobile View */}
+        <div className="flex flex-col gap-4 md:hidden">
+          {gradesData.map((data, idx) => (
+            <div key={idx} className="p-4 rounded-2xl border border-slate-100 bg-white shadow-sm flex flex-col gap-3">
+              <div className="flex justify-between items-start">
+                <div>
+                  <span className="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded uppercase tracking-wider">{data.code}</span>
+                  <h3 className="font-bold text-slate-800 mt-1">{data.course}</h3>
+                </div>
+                <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 font-black flex items-center justify-center shrink-0 border border-indigo-100">
+                  {data.grade}
+                </div>
+              </div>
+              <div className="flex justify-between items-center pt-2 border-t border-slate-50">
+                <div className="text-xs text-slate-500">
+                  <span className="font-semibold text-slate-700">{data.credits}</span> SKS
+                </div>
+                <div className="text-xs text-slate-500">
+                  Indeks: <span className="font-semibold text-slate-700">{data.score.toFixed(2)}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </motion.div>
   );
