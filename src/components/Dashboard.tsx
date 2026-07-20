@@ -9,9 +9,10 @@ import clsx from 'clsx';
 
 interface DashboardProps {
   session: any;
+  onLogout?: () => void;
 }
 
-export function Dashboard({ session }: DashboardProps) {
+export function Dashboard({ session, onLogout }: DashboardProps) {
   const [profile, setProfile] = useState<any>(null);
   const [activeTab, setActiveTab] = useState('dashboard');
 
@@ -35,7 +36,12 @@ export function Dashboard({ session }: DashboardProps) {
   }, [session]);
 
   const handleLogout = async () => {
+    if (session?.user?.id === 'demo') {
+      if (onLogout) onLogout();
+      return;
+    }
     await supabase.auth.signOut();
+    if (onLogout) onLogout();
   };
 
   const navItems = [
