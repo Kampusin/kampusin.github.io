@@ -18,50 +18,54 @@
   <link rel="stylesheet" href="/assets/css/styles.css">
 
   <style>
-    /* Premium Animated Background */
+    /* Pure CSS Animated Mesh Gradient Background */
     body {
       margin: 0; padding: 0; overflow: hidden;
-      background: #0f172a;
+      background-color: #0f172a;
       display: flex; align-items: center; justify-content: center;
       min-height: 100vh; min-height: 100dvh;
       font-family: var(--font-sans);
     }
     
     .bg-fluid {
-      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
       z-index: 0; overflow: hidden;
+      background: 
+        radial-gradient(circle at 15% 50%, rgba(79, 70, 229, 0.4), transparent 25%),
+        radial-gradient(circle at 85% 30%, rgba(147, 51, 234, 0.3), transparent 25%),
+        radial-gradient(circle at 50% 80%, rgba(59, 130, 246, 0.3), transparent 25%);
+      background-size: 200% 200%;
+      animation: meshGradient 15s ease infinite alternate;
     }
-    .orb {
-      position: absolute; filter: blur(80px); border-radius: 50%;
-      animation: float 20s infinite ease-in-out;
-      opacity: 0.6;
-    }
-    .orb-1 { width: 50vw; height: 50vw; background: rgba(79, 70, 229, 0.4); top: -10%; left: -10%; animation-delay: 0s; }
-    .orb-2 { width: 40vw; height: 40vw; background: rgba(147, 51, 234, 0.3); bottom: -10%; right: -10%; animation-delay: -5s; }
-    .orb-3 { width: 30vw; height: 30vw; background: rgba(59, 130, 246, 0.3); top: 40%; left: 60%; animation-delay: -10s; }
-    @keyframes float {
-      0%, 100% { transform: translate(0, 0) scale(1); }
-      33% { transform: translate(5%, 10%) scale(1.1); }
-      66% { transform: translate(-10%, -5%) scale(0.9); }
+    
+    @keyframes meshGradient {
+      0% { background-position: 0% 0%; }
+      50% { background-position: 100% 100%; }
+      100% { background-position: 0% 100%; }
     }
 
-    /* Glassmorphism Tilt Card */
+    /* Glassmorphism Tilt Card Premium */
     .auth-container {
       position: relative; z-index: 10;
       width: 100%; max-width: 420px; padding: var(--sp-4);
       perspective: 1000px;
+      animation: fadeUp 0.8s cubic-bezier(0.25, 1, 0.3, 1) forwards;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
     }
     .auth-card {
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 30px 60px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(40px) saturate(120%);
+      -webkit-backdrop-filter: blur(40px) saturate(120%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 30px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.15);
       border-radius: var(--r-2xl);
-      padding: var(--sp-8);
+      padding: var(--sp-10) var(--sp-8);
       color: white;
       transform-style: preserve-3d;
-      transition: box-shadow 0.3s ease;
+      transition: box-shadow 0.4s ease;
     }
     
     .brand-glow {
@@ -130,19 +134,26 @@
     }
     
     @media (max-width: 600px) {
-      .auth-card { padding: var(--sp-6); }
-      .bg-fluid { display: none; } /* Simpler on mobile */
-      body { background: linear-gradient(135deg, #0f172a, #1e1b4b); }
+      .auth-container { padding: var(--sp-3); max-width: 100%; }
+      .auth-card { 
+        padding: var(--sp-8) var(--sp-5); 
+        border-radius: var(--r-xl); 
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        transform: none !important; /* Disable 3D tilt on mobile */
+      }
+      .bg-fluid { 
+        background: 
+          radial-gradient(circle at 50% -20%, rgba(79, 70, 229, 0.3), transparent 60%),
+          #0f172a;
+        animation: none; /* Reduce paint cost on mobile */
+      }
     }
   </style>
 </head>
 <body>
 
-<div class="bg-fluid">
-  <div class="orb orb-1"></div>
-  <div class="orb orb-2"></div>
-  <div class="orb orb-3"></div>
-</div>
+<div class="bg-fluid"></div>
 
 <div class="auth-container">
   <div class="auth-card" data-tilt data-tilt-max="10" data-tilt-speed="400" data-tilt-perspective="1000" data-tilt-glare data-tilt-max-glare="0.2">
