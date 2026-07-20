@@ -171,12 +171,14 @@ export function Dashboard({ session, onLogout }: DashboardProps) {
                 isActive ? "text-indigo-600" : "text-slate-400"
               )}
             >
-              <motion.div
-                animate={{ y: isActive ? -2 : 0, scale: isActive ? 1.1 : 1 }}
-                transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+              <div
+                className={clsx(
+                  "transition-all duration-300 ease-out",
+                  isActive ? "-translate-y-0.5 scale-110" : "translate-y-0 scale-100"
+                )}
               >
                 <Icon size={24} strokeWidth={isActive ? 2.5 : 2} />
-              </motion.div>
+              </div>
               <span className="text-[10px] font-bold uppercase tracking-wider">{item.label}</span>
             </button>
           );
