@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { User, Mail, Phone, MapPin, BookOpen, Calendar, Award } from 'lucide-react';
+import { User, Mail, Phone, MapPin, BookOpen, Calendar } from 'lucide-react';
 
 interface ProfileProps {
   profile: any;
