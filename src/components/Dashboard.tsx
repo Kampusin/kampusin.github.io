@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import {
   LayoutDashboard, Calendar, FileCheck, Award, BookOpen, 
   Bell, User, LogOut, Search, GraduationCap, Megaphone, 
-  CreditCard, ChevronRight, Clock, MapPin
+  CreditCard, ChevronRight
 } from 'lucide-react';
 import clsx from 'clsx';
 
