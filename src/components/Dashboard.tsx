@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { motion } from 'framer-motion';
+import {
   LayoutDashboard, Calendar, FileCheck, Award, BookOpen, 
   Bell, User, LogOut, Search, GraduationCap, Megaphone, 
   CreditCard, ChevronRight, Clock, MapPin
