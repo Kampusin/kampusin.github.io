@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://ohviyawkiwacafwodbbr.supabase.co; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
   <meta name="theme-color" content="#0f766e">
@@ -183,12 +183,15 @@
 </div>
 
 <script src="/assets/js/app.js"></script>
+<script src="/assets/js/supabase-client.js"></script>
+<script src="/assets/js/db.js"></script>
 <script>
   // ---- Login page controller ----
   (function() {
-    // If already logged in, jump to dashboard
+    // If already logged in (either mock or Supabase), jump to dashboard
     const session = Kampusin.getSession();
-    if (session) { window.location.href = '/dashboard.html'; return; }
+    const sbToken = KampusinBackend.getToken();
+    if (session || sbToken) { window.location.href = '/dashboard.html'; return; }
 
     const form = document.getElementById('loginForm');
     const tabs = document.querySelectorAll('.auth-tab');
@@ -228,7 +231,7 @@
     emailInput.addEventListener('input', hideError);
     passInput.addEventListener('input', hideError);
 
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
       hideError();
 
@@ -238,17 +241,27 @@
       if (!email || !password) { showError('Mohon isi email dan kata sandi.'); return; }
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showError('Format email tidak valid.'); return; }
 
-      const result = Kampusin.login(email, password, currentRole);
-      if (result.ok) {
-        // brief feedback then redirect
-        const btn = form.querySelector('button[type=submit]');
-        btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Berhasil';
-        btn.disabled = true;
-        setTimeout(() => window.location.href = '/dashboard.html', 500);
-      } else {
-        showError(result.error || 'Email atau kata sandi salah.');
-        passInput.value = '';
-        passInput.focus();
+      const btn = form.querySelector('button[type=submit]');
+      const originalHTML = btn.innerHTML;
+      btn.innerHTML = 'Memproses…';
+      btn.disabled = true;
+
+      try {
+        const result = await KampusinDB.login(email, password, currentRole);
+        if (result.ok) {
+          btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Berhasil';
+          setTimeout(() => window.location.href = '/dashboard.html', 500);
+        } else {
+          showError(result.error || 'Email atau kata sandi salah.');
+          passInput.value = '';
+          passInput.focus();
+          btn.innerHTML = originalHTML;
+          btn.disabled = false;
+        }
+      } catch (err) {
+        showError('Gagal terhubung ke server. Coba lagi.');
+        btn.innerHTML = originalHTML;
+        btn.disabled = false;
       }
     });
   })();

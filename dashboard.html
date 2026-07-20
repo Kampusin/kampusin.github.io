@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://ohviyawkiwacafwodbbr.supabase.co; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta name="theme-color" content="#0f766e">
   <meta name="robots" content="noindex">
@@ -81,21 +81,47 @@
 </div>
 
 <script src="/assets/js/app.js"></script>
+<script src="/assets/js/supabase-client.js"></script>
+<script src="/assets/js/db.js"></script>
 <script>
 /* ============================================================
-   Dashboard SPA router
+   Dashboard SPA router (backend-aware)
    ============================================================ */
 (function() {
   const K = window.Kampusin;
+  const DB = window.KampusinDB;
   const I = K.icons;
 
   // ---- Auth guard ----
-  const session = K.getSession();
-  if (!session) { window.location.href = '/'; return; }
-  const user = K.getCurrentUser();
-  if (!user) { K.logout(); return; }
-  const role = session.role;
-  const profile = user.profile;
+  // Dukung dua mode: mock (lama) atau Supabase (backend)
+  let session = K.getSession();
+  let sbToken = KampusinBackend.getToken();
+  if (!session && !sbToken) { window.location.href = '/'; return; }
+
+  // Tentukan role. Untuk Supabase, kita perlu fetch profil dulu.
+  // Sementara loading, pakai mock data sebagai placeholder.
+  let role = session ? session.role : 'mahasiswa';
+  let profile = null;
+  let _backendProfile = null; // diisi async setelah fetch
+
+  // Kalau Supabase mode, decode role dari JWT tidak reliable (RLS saja yang tahu),
+  // jadi kita simpan role di localStorage saat login.
+  if (!session && sbToken) {
+    // Baca role dari cache lokal (diset saat login berhasil)
+    const cachedRole = localStorage.getItem('kampusin_role');
+    role = cachedRole || 'mahasiswa';
+    // Buat session mock supaya UI tetap render
+    session = { role };
+    // Profile placeholder sambil fetch
+    profile = {
+      avatar: '—', name: 'Memuat…', email: '',
+      nim: '', prodi: '', semester: 0, ipk: 0, sksLulus: 0,
+    };
+  } else {
+    const user = K.getCurrentUser();
+    if (!user) { K.logout(); return; }
+    profile = user.profile;
+  }
 
   // ---- Inject icons into static markup ----
   document.getElementById('icLogout').innerHTML = I.logout;
@@ -207,8 +233,49 @@
 
   // Logout
   document.getElementById('logoutBtn').addEventListener('click', () => {
-    if (confirm('Keluar dari akun?')) K.logout();
+    if (confirm('Keluar dari akun?')) DB.logout();
   });
+
+  // ---- Async backend init (Supabase mode) ----
+  // Kalau login via Supabase, fetch profil asli lalu re-render UI
+  (async () => {
+    if (!sbToken) return; // mode mock, skip
+    try {
+      const p = await DB.getMyProfile();
+      if (p) {
+        _backendProfile = p;
+        profile = {
+          id: p.id,
+          avatar: p.avatar_initials || (p.full_name || '?').slice(0,2).toUpperCase(),
+          name: p.full_name || 'Pengguna',
+          email: p.email || '',
+          nim: p.nim || '', prodi: p.prodi || '', fakultas: p.fakultas || '',
+          angkatan: p.angkatan, semester: p.semester,
+          nidn: p.nidn || '', jabatan: p.jabatan || '',
+          ipk: parseFloat(p.ipk) || 0, sksLulus: p.sks_lulus || 0,
+          sksTotal: 144,
+          dosenPa: '—',
+          mataKuliahCount: 0, mahasiswaBimbingan: 0,
+        };
+        role = p.role || role;
+        session = { role, email: p.email, name: p.full_name, loginAt: Date.now() };
+        // refresh avatar + sidebar
+        document.getElementById('sideAvatar').textContent = profile.avatar;
+        document.getElementById('sideName').textContent = profile.name;
+        document.getElementById('sideRole').textContent = role === 'mahasiswa'
+          ? `${profile.nim || '-'} · ${profile.prodi || '-'}`
+          : `${profile.nidn || '-'} · ${profile.jabatan || '-'}`;
+        document.getElementById('topAvatar').textContent = profile.avatar;
+        // Rebuild nav (role mungkin berubah)
+        buildSidebarNav(); buildBottomNav();
+        routeFromHash(); // re-render current view with real data
+      }
+    } catch (err) {
+      console.warn('[Kampusin] Gagal fetch profil backend:', err.message);
+      // Kalau token expired/invalid, logout
+      if (err.status === 401) { DB.logout(); }
+    }
+  })();
 
   // ---- VIEW RENDERERS ----
   const TITLES = {
@@ -225,9 +292,26 @@
     const el = document.getElementById('view');
     el.innerHTML = `<div class="view">${html}</div>`;
     el.scrollTop = 0;
-    // Bind any post-render handlers
-    if (VIEWS._after) VIEWS._after(id);
+    // Async refresh from backend (replace mock data with real data)
+    if (VIEWS._async) VIEWS._async(id);
   }
+
+  // ---- Async backend refresh ----
+  // Untuk tiap view, setelah render mock, coba fetch data backend & re-render
+  VIEWS._async = async function(id) {
+    if (!sbToken) return; // mode mock, skip
+    try {
+      // Override K.ANNOUNCEMENTS dengan data backend
+      const ann = await DB.getAnnouncements();
+      if (ann && ann.length) K.ANNOUNCEMENTS = ann;
+    } catch (e) { /* abaikan, pakai mock */ }
+    // Hanya re-render kalau data berubah signifikan (pengumuman)
+    if (id === 'announce' || id === 'dashboard') {
+      const fn = VIEWS[id];
+      const el = document.getElementById('view');
+      el.innerHTML = `<div class="view">${fn()}</div>`;
+    }
+  };
 
   /* ---------- shared components ---------- */
   function pageHead(title, sub) {
