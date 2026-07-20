@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --brand-50: 238 100% 98%;
+    --brand-100: 238 100% 93%;
+    --brand-200: 238 100% 86%;
+    --brand-300: 238 100% 75%;
+    --brand-400: 238 100% 64%;
+    --brand-500: 238 100% 50%;
+    --brand-600: 238 100% 41%;
+
+    --radius: 0.75rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-gray-800;
+  }
+  body {
+    @apply bg-slate-900 text-slate-50;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
